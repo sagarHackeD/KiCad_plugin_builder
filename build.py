@@ -67,13 +67,12 @@ def create_build_dir():
 
 
 def copy_icons_to_build_dir():
-    resize_image("icon.png", (64, 64), "build/resources/icon.png")
-    resize_image("icon.png", (24, 24), "build/plugins/icon.png")
+    resize_image("resources/icon.png", (64, 64), "build/resources/icon.png")
+    resize_image("resources/icon.png", (24, 24), "build/plugins/icon.png")
 
 
 def copy_files_to_build_dir():
-    files_to_copy = glob.glob('*.py')
-    files_to_copy.remove("build.py")
+    files_to_copy = glob.glob('src/*.py')
 
     for file in files_to_copy:
         shutil.copy(file, "build/plugins")
@@ -98,6 +97,9 @@ def generate_metadata(output_metadata_file, zip_filename):
         f.write("\n")
     print(f"Generated {output_metadata_file} with updated metadata.")
 
+def create_package_Metadata():
+    pass
+
 
 if __name__ == "__main__":
     remove_build_dir()
@@ -106,4 +108,5 @@ if __name__ == "__main__":
     copy_icons_to_build_dir()
     build_plugin_zip("kicad-package.zip")
     generate_metadata("kicad-package-metadata.json", "kicad-package.zip")
-    remove_build_dir()
+    create_package_Metadata()
+    # remove_build_dir()
