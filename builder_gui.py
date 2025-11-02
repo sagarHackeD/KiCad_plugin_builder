@@ -99,8 +99,20 @@ def generate_metadata(output_metadata_file, zip_filename):
     print(f"Generated {output_metadata_file} with updated metadata.")
 
 
-def create_package_Metadata():
-    pass
+def create_package_Metadata(
+    input_metadata_file, output_metadata_file, zip_filename, zip_file_url
+):
+    with open(input_metadata_file, "r", encoding="utf-8") as f:
+        metadata = json.load(f)
+        version = metadata["versions"][0]
+        package_metadata = get_package_metadata(zip_filename)
+        package_metadata["download_url"] = zip_file_url
+        version.update(package_metadata)
+
+    with open(output_metadata_file, "w", encoding="utf-8") as f:
+        json.dump(metadata, f, indent=4)
+        f.write("\n")
+    print(f"Generated {output_metadata_file} with updated metadata.")
 
 
 class BuilderFrame(wx.Frame):
@@ -124,8 +136,8 @@ class BuilderFrame(wx.Frame):
         self.remove_cb.SetValue(True)  # default: remove after build
 
         # Add widgets to sizer with some padding
-        vbox.Add(generate_btn, 0, wx.ALL | wx.CENTER, 8)
         vbox.Add(self.remove_cb, 0, wx.ALL | wx.CENTER, 8)
+        vbox.Add(generate_btn, 0, wx.ALL | wx.CENTER, 8)
 
         # Set the sizer
         panel.SetSizer(vbox)
@@ -137,7 +149,6 @@ class BuilderFrame(wx.Frame):
         copy_icons_to_build_dir()
         build_plugin_zip("kicad-package.zip")
         generate_metadata("kicad-package-metadata.json", "kicad-package.zip")
-        create_package_Metadata()
         # Optionally remove the build directory based on the checkbox
         if getattr(self, "remove_cb", None) and self.remove_cb.GetValue():
             remove_build_dir()
