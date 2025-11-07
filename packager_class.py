@@ -13,21 +13,20 @@ class Packager:
         self.metadata_file = metadata_file
         self.src_folder = src_folder
         self.icon_file = icon_file
-        pass
 
     def __create_build_dir(self):
         os.mkdir(self.build_dir)
         os.mkdir(self.build_dir+"/resources")
         os.mkdir(self.build_dir+"/plugins")
 
-    def __resize_image(self, input_path, size, output_path):
+    def resize_image(self, input_path, size, output_path):
         img = Image.open(input_path)
         img_resized = img.resize(size, Image.Resampling.LANCZOS)
         img_resized.save(output_path)
 
     def __copy_icons_to_build_dir(self):
-        self.__resize_image(self.icon_file, (64, 64), self.build_dir+"/resources/icon.png")
-        self.__resize_image(self.icon_file, (24, 24), self.build_dir+"/plugins/icon.png")
+        self.resize_image(self.icon_file, (64, 64), self.build_dir+"/resources/icon.png")
+        self.resize_image(self.icon_file, (24, 24), self.build_dir+"/plugins/icon.png")
 
     def __copy_files_to_build_dir(self):
         files_to_copy = glob.glob(self.src_folder+"/*.py")
@@ -51,16 +50,3 @@ class Packager:
         # self.__remove_build_dir()
 
 
-packager = Packager("build","metadata.json",'src',"resources/icon.png")
-
-
-if __name__ == "__main__":
-    # make sure your metadata file is filled with necessory information before running this script
-
-    packager.package()
-
-    # after packaging check the zip file with Packaging Toolkit https://gitlab.com/kicad/addons/metadata#packaging-toolkit
-
-    # after verifying you have to create a relesease on github and upload the zip file or any other publically accessible location
-
-    # then run the metadata generator to create icon and a metadata file with sha256, download link and size information for submitting to the KiCad plugin manager
