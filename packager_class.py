@@ -22,15 +22,16 @@ class Packager:
         self.output_dir = output_dir
 
     def __create_build_dir(self):
-        os.makedirs(self.output_dir, exist_ok=True)
-        os.mkdir(self.build_dir)
-        os.mkdir(self.build_dir + "/resources")
-        os.mkdir(self.build_dir + "/plugins")
+        for directory in [self.output_dir,self.build_dir + "/resources",self.build_dir + "/plugins"]:
+            os.makedirs(directory, exist_ok=True)
+            print(f"""Creating directory {directory}""")
+
 
     def resize_image(self, input_path, size, output_path):
         img = Image.open(input_path)
         img_resized = img.resize(size, Image.Resampling.LANCZOS)
         img_resized.save(output_path)
+        print(f"""Resizing {input_path} to {size} at {output_path}""")
 
     def __copy_icons_to_build_dir(self):
         self.resize_image(
@@ -44,15 +45,18 @@ class Packager:
         files_to_copy = glob.glob(self.src_folder + "/*.py")
         for file in files_to_copy:
             shutil.copy(file, self.build_dir + "/plugins")
+            print(f"Copying {file} to {self.build_dir + "/plugins"}")
         shutil.copy(self.metadata_file, self.build_dir)
+        print(f"Copying {self.metadata_file} to {self.build_dir}")
 
     def __build_plugin_zip(self, zip_filename):
         # print(os.path.abspath(self.build_dir))
         shutil.make_archive(zip_filename.replace(".zip", ""), "zip", self.build_dir)
-        print(f"Created {zip_filename}")
+        print(f"Creating {zip_filename} from {self.build_dir}")
 
     def __remove_build_dir(self):
         shutil.rmtree(self.build_dir, ignore_errors=True)
+        print(f"Removing build directory {self.build_dir}")
 
     def package(self):
         """Build the plugin package."""
