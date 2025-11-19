@@ -30,17 +30,19 @@ class MetadataGenerator:
         with zipfile.ZipFile(self.download_path, "r") as zip_ref:
             zip_ref.extract("metadata.json", self.download_dir)
 
-    def generate_metadata(self, output_metadata_file):
+    def generate_metadata(self, input_metadata_file):
+        os.makedirs("output", exist_ok=True)
+
         with open(self.download_dir + "/metadata.json", "r", encoding="utf-8") as f:
             metadata = json.load(f)
             version = metadata["versions"][0]
             package_metadata = self.__get_package_stats(self.download_path)
             version.update(package_metadata)
 
-        with open(output_metadata_file, "w", encoding="utf-8") as f:
+        with open("output/metadata.json", "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=4)
             f.write("\n")
-        print(f"Generated {output_metadata_file} with updated metadata.")
+        print("Generated output/metadata.json with updated metadata.")
 
     def __getsha256(self, filename) -> str:
         sha256 = hashlib.sha256()

@@ -1,7 +1,10 @@
+import os
 import shutil
 import PySimpleGUI as sg
 from packager_class import Packager
 from metadata_generator_class import MetadataGenerator
+
+from github import get_release_urls
 
 
 sg.set_options(font=("Courier", 12))
@@ -62,12 +65,14 @@ Packager_layout = [
 ]
 
 Metadata = [
-    [sg.Text("Create Local Backup")],
+    [sg.Text("Populate Metadata File for submission : ")],
+    [sg.Text("Github Username : "), sg.Input("sagarHackeD", k="usernameKey")],
+    [sg.Text("Github Repo : "), sg.Input("Place_By_Sch_KiCad", k="repoKey")],
     [
-        sg.Text("Source Location : "),
-        sg.Input("", k="source_folder"),
-        sg.FolderBrowse(),
+        sg.Button("Populate", k="metadata_populate_Key"),
+        # sg.Button("Clean", k="cleanKey"),
     ],
+    output_terminal("terminal_packager"),
 ]
 
 help_layout = [
@@ -122,6 +127,20 @@ while True:
                 shutil.rmtree("build", ignore_errors=True)
                 shutil.rmtree("com.*", ignore_errors=True)
                 print("Cleaned build directory.\n")
+
+            case "metadata_populate_Key":
+                print("Populating Metadata File...\n")
+
+                for urls in get_release_urls(values["usernameKey"], values["repoKey"]):
+                    print(f"Found URL: {urls}\n")
+                    metadata_generator = MetadataGenerator(urls)
+                    metadata_generator.download_zip()
+                    metadata_generator.extract_metadata_from_zip()
+                    metadata_generator.generate_metadata("metadata.json")
+                    print("Metadata File Populated Successfully!\n")
+                    break
+
+    
             case _:
                 # for v in values:
                 #     pass
