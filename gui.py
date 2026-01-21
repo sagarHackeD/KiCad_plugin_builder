@@ -1,6 +1,5 @@
-import os
 import shutil
-import PySimpleGUI as sg
+import PySimpleGUI.PySimpleGUI as sg
 from packager_class import Packager
 from metadata_generator_class import MetadataGenerator
 
@@ -122,7 +121,7 @@ while True:
             case "Build Plugin Package":
                 print("Building Plugin Package...\n")
                 build_package(values)
-                print("Plugin Package Built Successfully!\nat: ./KiCad_plugin.zip\n")
+                print("Plugin Package Built Successfully!\nat: ./kicad-package.zip\n")
             case "cleanKey":
                 shutil.rmtree("build", ignore_errors=True)
                 shutil.rmtree("com.*", ignore_errors=True)

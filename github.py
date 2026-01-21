@@ -16,7 +16,7 @@ def get_release_urls(owner: str, repo: str) -> list[str]:
 
 if __name__ == "__main__":
     owner = "sagarHackeD"
-    repo = "Snap_To_Grid_KiCAD"
+    repo = "Place_By_Sch_KiCad"
     urls = get_release_urls(owner, repo)
     for url in urls:
         print(url)

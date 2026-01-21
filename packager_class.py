@@ -64,7 +64,7 @@ class Packager:
         self.__create_build_dir()
         self.__copy_icons_to_build_dir()
         self.__copy_files_to_build_dir()
-        self.__build_plugin_zip(self.output_dir + "/KiCad_plugin.zip")
+        self.__build_plugin_zip(self.output_dir + "/kicad-package.zip")
         self.__remove_build_dir()
 
 
