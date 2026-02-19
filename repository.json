@@ -1,0 +1,22 @@
+{
+    "$schema": "https://gitlab.com/kicad/code/kicad/-/raw/master/kicad/pcm/schemas/pcm.v1.schema.json#/definitions/Repository",
+    "maintainer": {
+        "contact": {
+            "web": "https://www.kicad.org/about/contact-us/"
+        },
+        "name": "KiCad team"
+    },
+    "name": "Sagar Naik repository",
+    "packages": {
+        "sha256": "12d197dcb48883dba8f5548b3263e602b3d04abd6ff97cc40388f4ca6358cf24",
+        "update_time_utc": "2026-02-11 11:02:30",
+        "update_timestamp": 1770807750,
+        "url": "https://gitlab.com/kicad/addons/repository/-/raw/main/packages.json"
+    },
+    "resources": {
+        "sha256": "9e7679a7f2bd77a0e1bdc5a9c08eb130b8ce21eabc7043f685b47663b102951f",
+        "update_time_utc": "2026-02-11 11:02:30",
+        "update_timestamp": 1770807750,
+        "url": "https://gitlab.com/kicad/addons/repository/-/jobs/artifacts/main/raw/artifacts/resources.zip?job=update"
+    }
+}

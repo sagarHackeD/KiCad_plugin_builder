@@ -3,6 +3,9 @@ import os
 from packager_class import Packager
 from metadata_generator_class import MetadataGenerator
 
+
+import packager
+
 output_dir = "output"
 
 packager = Packager(
@@ -14,7 +17,7 @@ packager = Packager(
 )
 
 medata = MetadataGenerator(
-    "https://github.com/sagarHackeD/Place_By_Sch_KiCad/releases/download/v2.0.0/kicad-package.zip"
+    "https://github.com/sagarHackeD/Place_By_Sch_KiCad/releases/download/v2.1.0/kicad-package.zip"
 )
 
 if __name__ == "__main__":
