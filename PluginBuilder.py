@@ -1,6 +1,5 @@
 import wx
 import sys
-import os
 
 from app import PluginBuilder
 from app.plugin_builder import RedirectText

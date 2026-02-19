@@ -1,1 +1,2 @@
-from .main import main
+from .plugin_packager import PackagerClass
+from .metadata_generator import MetadataGenerator

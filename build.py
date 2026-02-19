@@ -1,29 +1,28 @@
 import json
 import os
-from packager_class import Packager
-from metadata_generator_class import MetadataGenerator
 
+from packager import MetadataGenerator, PackagerClass
 
-import packager
-
-output_dir = "output"
-
-packager = Packager(
-    build_dir="build",
-    metadata_file="metadata.json",
-    src_folder="src",
-    icon_file="resources/icon.png",
-    output_dir="output",
-)
-
-medata = MetadataGenerator(
-    "https://github.com/sagarHackeD/Place_By_Sch_KiCad/releases/download/v2.1.0/kicad-package.zip"
-)
 
 if __name__ == "__main__":
-    # make sure your metadata file is filled with necessory information before running this script
+    #Step 1 : generate a zip file for your plugin using the packager 
+    packager_ = PackagerClass(
+        build_dir="build",
+        metadata_file="metadata.json",
+        src_folder="src",
+        icon_file="resources/icon.png",
+        output_dir="output",
+    )
+    
+    packager_.package()
 
-    packager.package()
+    ## Step 2 : create a release on github and upload the zip file or any other publically accessible location
+
+    ## Step 3 : run the metadata generator to create icon and a metadata file with sha256, download link and size information for submitting to the KiCad plugin manager
+
+    medata = MetadataGenerator("https://github.com/sagarHackeD/Place_By_Sch_KiCad/releases/download/v2.1.0/kicad-package.zip")
+
+    # make sure your metadata file is filled with necessory information before running this script
 
     # after packaging check the zip file with Packaging Toolkit https://gitlab.com/kicad/addons/metadata#packaging-toolkit
 
@@ -32,6 +31,8 @@ if __name__ == "__main__":
     # then run the metadata generator to create icon and a metadata file with sha256, download link and size information for submitting to the KiCad plugin manager
 
     # create a package
+
+    output_dir = "output"
 
     with open("metadata.json", "r", encoding="utf-8") as f:
         metadata = json.load(f)
@@ -45,6 +46,4 @@ if __name__ == "__main__":
     medata.download_zip()
     medata.extract_metadata_from_zip()
     medata.generate_metadata(os.path.join(output_dir, identifier, "metadata.json"))
-    packager.resize_image(
-        "resources/icon.png", (64, 64), os.path.join(output_dir, identifier, "icon.png")
-    )
+    packager_.resize_image("resources/icon.png", (64, 64), os.path.join(output_dir, identifier, "icon.png"))
