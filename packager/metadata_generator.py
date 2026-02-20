@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import zipfile
+import requests
 
 
 class MetadataGenerator:
@@ -9,16 +10,25 @@ class MetadataGenerator:
 
     READ_SIZE = 65536
 
-    def __init__(self, download_url: str):
-        self.download_url = download_url
-        self.download_dir = "build"
-        self.download_path = os.path.join(self.download_dir, "kicad-package.zip")
+    version_data = []
 
-    def download_zip(self):
-        import requests
+    def __init__(self):
+        self.build_dir = "build"
+        self.version_data = []
+        self.output_dir = "output"
+        # self.download_path = os.path.join(self.download_dir, "kicad-package.zip")
 
-        if not os.path.exists(self.download_dir):
-            os.makedirs(self.download_dir, exist_ok=True)
+    def download_zip(self, release, download_dir: str = "build"):
+        """Download the zip file from the release and save it to the specified directory."""
+        self.download_url = release["browser_download_url"]
+        self.version = release["tag_name"]
+        self.version_path = os.path.join(download_dir, self.version)
+
+        if not os.path.exists(self.version_path):
+            os.makedirs(self.version_path, exist_ok=True)
+
+        self.build_dir = self.version_path
+        self.download_path = os.path.join(self.version_path, "kicad-package.zip")
 
         response = requests.get(self.download_url, stream=True, timeout=30)
         response.raise_for_status()
@@ -26,23 +36,25 @@ class MetadataGenerator:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-    def extract_metadata_from_zip(self):
-        with zipfile.ZipFile(self.download_path, "r") as zip_ref:
-            zip_ref.extract("metadata.json", self.download_dir)
+        return self.download_path, self.version
 
-    def generate_metadata(self, input_metadata_file):
-        os.makedirs("output", exist_ok=True)
+    def extract_metadata_from_zip(self, download_path: str, version: str):
+        with zipfile.ZipFile(download_path, "r") as zip_ref:
+            zip_ref.extract("metadata.json", os.path.dirname(download_path))
 
-        with open(self.download_dir + "/metadata.json", "r", encoding="utf-8") as f:
+    def generate_metadata(self, input_metadata_file, version_data, package_dir):
+
+        os.makedirs(package_dir, exist_ok=True)
+
+        with open(input_metadata_file, "r", encoding="utf-8") as f:
             metadata = json.load(f)
-            version = metadata["versions"][0]
-            package_metadata = self.__get_package_stats(self.download_path)
-            version.update(package_metadata)
+            metadata["versions"] = version_data
 
-        with open("output/metadata.json", "w", encoding="utf-8") as f:
+        output_metadata_file = os.path.join(package_dir, "metadata.json")
+        with open(output_metadata_file, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=4)
             f.write("\n")
-        print("Generated output/metadata.json with updated metadata.")
+        print(f"Generated {output_metadata_file} with updated metadata.")
 
     def __getsha256(self, filename) -> str:
         sha256 = hashlib.sha256()
@@ -53,10 +65,43 @@ class MetadataGenerator:
 
     def __get_package_stats(self, filename):
         with zipfile.ZipFile(filename, "r") as z:
-            install_size = sum(entry.file_size for entry in z.infolist() if not entry.is_dir())
+            install_size = sum(
+                entry.file_size for entry in z.infolist() if not entry.is_dir()
+            )
         return {
             "download_sha256": self.__getsha256(filename),
             "download_size": os.path.getsize(filename),
             "install_size": install_size,
             "download_url": self.download_url,
         }
+
+    def extract_version_from_zip(self, download_path: str) -> str:
+        data = self.__get_package_stats(download_path)
+        with zipfile.ZipFile(download_path, "r") as zip_ref:
+            with zip_ref.open("metadata.json") as f:
+                metadata = json.load(f)
+                metadata["versions"] = {**metadata["versions"][0] ,**data}
+
+                return metadata["versions"]
+            
+    def create_package_dir(self):
+        with open("metadata.json", "r", encoding="utf-8") as f:
+            metadata = json.load(f)
+            identifier = metadata["identifier"]
+
+            if not os.path.exists(os.path.join(self.output_dir, identifier)):
+                os.makedirs(os.path.join(self.output_dir, identifier), exist_ok=True)
+
+        return os.path.join(self.output_dir, identifier)
+            
+
+    def create(self, releases, package_dir):
+        for release in releases:
+            print(f"Processing release: {release['tag_name']} - {release['name']}")
+
+            download_path, version = self.download_zip(release, download_dir="build")
+            self.extract_metadata_from_zip(download_path, version)
+            self.version_data.append(self.extract_version_from_zip(download_path))
+
+
+        self.generate_metadata("metadata.json", self.version_data,package_dir)

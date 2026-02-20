@@ -59,6 +59,20 @@ class KiCadPluginBuilder(wx.Frame):
         )
         vbox.Add(self.icon_file, 0, wx.EXPAND | wx.ALL, 5)
 
+        self.build_dir = self.dir_picker(
+            panel,
+            "Build Directory   :",
+            "C:/Users/ECHS/Desktop/Place_By_Sch_KiCad/build",
+        )
+        vbox.Add(self.build_dir, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.output_dir = self.dir_picker(
+            panel,
+            "Output Directory  :",
+            "C:/Users/ECHS/Desktop/Place_By_Sch_KiCad"
+        )
+        vbox.Add(self.output_dir, 0, wx.EXPAND | wx.ALL, 5)
+
         btn_box = wx.BoxSizer(wx.HORIZONTAL)
 
         build_btn = wx.Button(panel, label="Build Plugin Package")
