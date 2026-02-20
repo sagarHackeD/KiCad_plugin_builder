@@ -3,7 +3,7 @@ import shutil
 
 class KiCadPluginBuilder(wx.Frame):
     def __init__(self):
-        super().__init__(None, title="KiCad Plugin Builder", size=(750, 500))
+        super().__init__(None, title="KiCad Plugin Builder", size=(600, -1))
 
         panel = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
