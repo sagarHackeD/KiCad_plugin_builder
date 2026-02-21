@@ -12,7 +12,7 @@ if __name__ == "__main__":
         metadata_file="metadata.json",
         src_folder="src",
         icon_file="resources/icon.png",
-        output_dir=medata.output_dir,
+        dist_dir=medata.dist_dir,
     )
 
     packager_.package()
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     # medata.download_zip()
     # medata.extract_metadata_from_zip()
-    # medata.generate_metadata(os.path.join(output_dir, identifier, "metadata.json"))
+    # medata.generate_metadata(os.path.join(dist_dir, identifier, "metadata.json"))
     packager_.resize_image("resources/icon.png", (64, 64), os.path.join(package_dir, "icon.png"))
 
 

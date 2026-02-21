@@ -34,6 +34,19 @@ def validate_json(file_path: str):
     except jsonschema.SchemaError as e:
         print("Invalid ❌")
         raise ValueError(f"Schema is invalid\n{e.message}")
+    
+
+def clean_build_environment():
+    import shutil
+    import os
+
+    build_dir = "build"
+    dist_dir = "dist"
+
+    for dir_path in [build_dir, dist_dir]:
+        if os.path.exists(dir_path):
+            shutil.rmtree(dir_path)
+            print(f"Removed {dir_path}")
 
 
 

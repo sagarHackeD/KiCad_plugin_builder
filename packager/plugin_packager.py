@@ -13,25 +13,25 @@ class PackagerClass:
         metadata_file="metadata.json",
         src_folder="src",
         icon_file="resources/icon.png",
-        output_dir="output",
+        dist_dir="dist",
     ):
         self.build_dir = build_dir
         self.metadata_file = metadata_file
         self.src_folder = src_folder
         self.icon_file = icon_file
-        self.output_dir = output_dir
+        self.dist_dir = dist_dir
 
     def __create_build_dir(self):
-        for directory in [self.output_dir,self.build_dir + "/resources",self.build_dir + "/plugins"]:
+        for directory in [self.dist_dir,self.build_dir + "/resources",self.build_dir + "/plugins"]:
             os.makedirs(directory, exist_ok=True)
             print(f"""Creating directory {directory}""")
 
 
-    def resize_image(self, input_path, size, output_path):
+    def resize_image(self, input_path, size, dist_path):
         img = Image.open(input_path)
         img_resized = img.resize(size, Image.Resampling.LANCZOS)
-        img_resized.save(output_path)
-        print(f"""Resizing {input_path} to {size} at {output_path}""")
+        img_resized.save(dist_path)
+        print(f"""Resizing {input_path} to {size} at {dist_path}""")
 
     def __copy_icons_to_build_dir(self):
         self.resize_image(self.icon_file, (64, 64), self.build_dir + "/resources/icon.png")
@@ -59,7 +59,7 @@ class PackagerClass:
         self.__create_build_dir()
         self.__copy_icons_to_build_dir()
         self.__copy_files_to_build_dir()
-        self.__build_plugin_zip(self.output_dir + "/kicad-package.zip")
+        self.__build_plugin_zip(self.dist_dir + "/kicad-package.zip")
         self.__remove_build_dir()
 
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         metadata_file="metadata.json",
         src_folder="src",
         icon_file="resources/icon.png",
-        output_dir="output",
+        dist_dir="dist",
     )
 
     packager.package()  # build the package

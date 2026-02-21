@@ -15,7 +15,7 @@ class MetadataGenerator:
     def __init__(self):
         self.build_dir = "build"
         self.version_data = []
-        self.output_dir = "output"
+        self.dist_dir = "dist"
         # self.download_path = os.path.join(self.download_dir, "kicad-package.zip")
 
     def download_zip(self, release, download_dir: str = "build"):
@@ -50,11 +50,11 @@ class MetadataGenerator:
             metadata = json.load(f)
             metadata["versions"] = version_data
 
-        output_metadata_file = os.path.join(package_dir, "metadata.json")
-        with open(output_metadata_file, "w", encoding="utf-8") as f:
+        dist_metadata_file = os.path.join(package_dir, "metadata.json")
+        with open(dist_metadata_file, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=4)
             f.write("\n")
-        print(f"Generated {output_metadata_file} with updated metadata.")
+        print(f"Generated {dist_metadata_file} with updated metadata.")
 
     def __getsha256(self, filename) -> str:
         sha256 = hashlib.sha256()
@@ -89,10 +89,10 @@ class MetadataGenerator:
             metadata = json.load(f)
             identifier = metadata["identifier"]
 
-            if not os.path.exists(os.path.join(self.output_dir, identifier)):
-                os.makedirs(os.path.join(self.output_dir, identifier), exist_ok=True)
+            if not os.path.exists(os.path.join(self.dist_dir, identifier)):
+                os.makedirs(os.path.join(self.dist_dir, identifier), exist_ok=True)
 
-        return os.path.join(self.output_dir, identifier)
+        return os.path.join(self.dist_dir, identifier)
             
 
     def create(self, releases, package_dir):
