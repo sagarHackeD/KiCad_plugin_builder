@@ -5,7 +5,7 @@ import requests
 
 def get_release_urls_github(owner: str, repo: str) -> list[dict[str, str]]:
     url = f"https://api.github.com/repos/{owner}/{repo}/releases"
-    # print(f"Fetching release information from {url}...")
+    print(f"Fetching release information from {url}...")
     response = requests.get(url, timeout=10)
     data = response.json()
 
