@@ -1,0 +1,1 @@
+mklink /D C:\Users\ECHS\Documents\KiCad\9.0\scripting\plugins\PBS C:\Users\ECHS\Desktop\KiCad\Place_By_Sch_KiCad\src
