@@ -1,15 +1,22 @@
 import os
 
-from packager import MetadataGenerator, PackagerClass, get_release_urls_github, get_owner_repo
+from packager import (
+    MetadataGenerator,
+    PackagerClass,
+    get_release_urls_github,
+    get_owner_repo,
+)
 
+in_metadata = "metadata_v1.json"
+out_metadata = "metadata.json"
 
 if __name__ == "__main__":
-    medata = MetadataGenerator()
+    medata = MetadataGenerator(in_metadata)
     package_dir = medata.create_package_dir()
     ## Step 1 : generate a zip file for your plugin using the packager
     packager_ = PackagerClass(
         build_dir=medata.build_dir,
-        metadata_file="metadata.json",
+        metadata_file=in_metadata,
         src_folder="src",
         icon_file="resources/icon.png",
         dist_dir=medata.dist_dir,
@@ -21,7 +28,7 @@ if __name__ == "__main__":
 
     ## Step 3 : run the metadata generator to create a metadata file with sha256, download link and size information for submitting to the KiCad plugin manager
 
-    owner, repo = get_owner_repo("metadata.json")
+    owner, repo = get_owner_repo(in_metadata)
 
     print(f"Fetching release information for {owner}/{repo}...")
 
@@ -43,7 +50,6 @@ if __name__ == "__main__":
     # medata.download_zip()
     # medata.extract_metadata_from_zip()
     # medata.generate_metadata(os.path.join(dist_dir, identifier, "metadata.json"))
-    packager_.resize_image("resources/icon.png", (64, 64), os.path.join(package_dir, "icon.png"))
-
-
-
+    packager_.resize_image(
+        "resources/icon.png", (64, 64), os.path.join(package_dir, "icon.png")
+    ) ## for submission

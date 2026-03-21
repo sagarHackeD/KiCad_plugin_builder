@@ -12,10 +12,11 @@ class MetadataGenerator:
 
     version_data = []
 
-    def __init__(self):
+    def __init__(self, metadata):
         self.build_dir = "build"
         self.version_data = []
         self.dist_dir = "dist"
+        self.in_metadata = metadata
         # self.download_path = os.path.join(self.download_dir, "kicad-package.zip")
 
     def download_zip(self, release, download_dir: str = "build"):
@@ -38,9 +39,9 @@ class MetadataGenerator:
 
         return self.download_path, self.version
 
-    def extract_metadata_from_zip(self, download_path: str, version: str):
+    def extract_metadata_from_zip(self, metadata, download_path: str, version: str):
         with zipfile.ZipFile(download_path, "r") as zip_ref:
-            zip_ref.extract("metadata.json", os.path.dirname(download_path))
+            zip_ref.extract(metadata, os.path.dirname(download_path))
 
     def generate_metadata(self, input_metadata_file, version_data, package_dir):
 
@@ -75,17 +76,17 @@ class MetadataGenerator:
             "download_url": self.download_url,
         }
 
-    def extract_version_from_zip(self, download_path: str) -> str:
+    def extract_version_from_zip(self, metadata, download_path: str) -> str:
         data = self.__get_package_stats(download_path)
         with zipfile.ZipFile(download_path, "r") as zip_ref:
-            with zip_ref.open("metadata.json") as f:
+            with zip_ref.open(metadata) as f:
                 metadata = json.load(f)
-                metadata["versions"] = {**metadata["versions"][0] ,**data}
+                metadata["versions"] = {**metadata["versions"][0], **data}
 
                 return metadata["versions"]
-            
+
     def create_package_dir(self):
-        with open("metadata.json", "r", encoding="utf-8") as f:
+        with open(self.in_metadata, "r", encoding="utf-8") as f:
             metadata = json.load(f)
             identifier = metadata["identifier"]
 
@@ -93,15 +94,13 @@ class MetadataGenerator:
                 os.makedirs(os.path.join(self.dist_dir, identifier), exist_ok=True)
 
         return os.path.join(self.dist_dir, identifier)
-            
 
     def create(self, releases, package_dir):
         for release in releases:
             print(f"Processing release: {release['tag_name']} - {release['name']}")
 
             download_path, version = self.download_zip(release, download_dir="build")
-            self.extract_metadata_from_zip(download_path, version)
-            self.version_data.append(self.extract_version_from_zip(download_path))
+            self.extract_metadata_from_zip("metadata.json",download_path, version)
+            self.version_data.append(self.extract_version_from_zip("metadata.json",download_path))
 
-
-        self.generate_metadata("metadata.json", self.version_data,package_dir)
+        self.generate_metadata(self.in_metadata, self.version_data, package_dir)
