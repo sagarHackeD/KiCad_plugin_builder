@@ -11,12 +11,15 @@ in_metadata = "metadata_v1.json"
 out_metadata = "metadata.json"
 
 if __name__ == "__main__":
+
     medata = MetadataGenerator(in_metadata)
+
     package_dir = medata.create_package_dir()
+
     ## Step 1 : generate a zip file for your plugin using the packager
     packager_ = PackagerClass(
         build_dir=medata.build_dir,
-        metadata_file=in_metadata,
+        metadata_file=medata.in_metadata,
         src_folder="src",
         icon_file="resources/icon.png",
         dist_dir=medata.dist_dir,
