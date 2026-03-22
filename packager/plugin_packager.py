@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 import shutil
 
@@ -41,8 +42,16 @@ class PackagerClass:
         files_to_copy = glob.glob(self.src_folder + "/*.py")
         for file in files_to_copy:
             shutil.copy(file, self.build_dir + "/plugins")
-            print(f"Copying {file} to {self.build_dir + "/plugins"}")
-        shutil.copy(self.metadata_file, self.build_dir)
+            print(f"Copying {file} to {self.build_dir}/plugins")
+
+        with open(self.metadata_file, "r", encoding="utf-8") as f:
+            metadata = json.load(f)
+            metadata.pop("Repository",None)
+
+        with open(self.build_dir+"/metadata.json", "w", encoding="utf-8") as f:
+            json.dump(metadata, f, indent=4)
+
+        # shutil.copy(self.metadata_file, self.build_dir)
         print(f"Copying {self.metadata_file} to {self.build_dir}")
 
     def __build_plugin_zip(self, zip_filename):

@@ -12,11 +12,11 @@ class MetadataGenerator:
 
     version_data = []
 
-    def __init__(self, metadata):
+    def __init__(self, in_metadata):
         self.build_dir = "build"
         self.version_data = []
         self.dist_dir = "dist"
-        self.in_metadata = metadata
+        self.in_metadata = in_metadata
         # self.download_path = os.path.join(self.download_dir, "kicad-package.zip")
 
     def download_zip(self, release, download_dir: str = "build"):
@@ -50,6 +50,7 @@ class MetadataGenerator:
         with open(input_metadata_file, "r", encoding="utf-8") as f:
             metadata = json.load(f)
             metadata["versions"] = version_data
+            metadata.pop("Repository",None)
 
         dist_metadata_file = os.path.join(package_dir, "metadata.json")
         with open(dist_metadata_file, "w", encoding="utf-8") as f:
